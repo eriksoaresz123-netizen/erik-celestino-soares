@@ -1,0 +1,134 @@
+
+# Cafeteria da Tia Rosa - Sistema de Cadastro e Pedidos
+# Aluno: Erik Celestino Soares
+# Descrição: Um sistema simples para gerenciarr clientes e pedidos.
+# ====================================================================
+
+# Estruturas de Dados
+
+# A chave é o nome e o valor é um dicionário com e-mail e pedidos.
+clientes = {}
+
+# cardápio da cafeteria.
+# A chave é o item e o valor é o preço.
+cardapio = {
+    'bolo': 8.50,
+    'cafe': 5.00,
+    'cha': 4.50,
+    'biscoito': 3.00
+}
+
+
+# - Funções do Sistema ---
+
+def cadastrar_cliente():
+    """
+    Função para cadastrar um novo cliente no sistema.
+    """
+    print("\n--- Cadastro de Novo Cliente ---")
+
+    nome = input("Digite o nome completo do cliente: ").strip().capitalize()
+
+    if nome in clientes:
+        print(f"Erro: O cliente '{nome}' já está cadastrado.")
+        return
+
+    email = input("Digite o e-mail do cliente: ").strip()
+
+    clientes[nome] = {'email': email, 'pedidos': []}
+    print(f"Cliente '{nome}' cadastrado com sucesso.")
+
+
+def fazer_pedido():
+    """
+    Função para criar um novo pedido para um cliente.
+    """
+    print("\n--- Fazer um Pedido ---")
+    nome = input("Digite o nome do cliente para o pedido: ").strip().capitalize()
+
+    if nome not in clientes:
+        print(f"Erro: Cliente '{nome}' não encontrado. Por favor, cadastre-o primeiro.")
+        return
+
+    print("\n--- Cardápio da Tia Rosa ---")
+    for item, preco in cardapio.items():
+        print(f"- {item.capitalize()}: R$ {preco:.2f}")
+
+    pedido_atual = {}
+    total_pedido = 0.0
+
+    while True:
+        item_escolhido = input("\nDigite o item para o pedido (ou 'fim' para terminar): ").strip().lower()
+
+        if item_escolhido == 'fim':
+            break
+
+        if item_escolhido in cardapio:
+            quantidade_str = input(f"Digite a quantidade de '{item_escolhido}': ")
+
+            if quantidade_str.isdigit() and int(quantidade_str) > 0:
+                quantidade = int(quantidade_str)
+                preco_item = cardapio[item_escolhido]
+                subtotal_item = preco_item * quantidade
+
+                pedido_atual[item_escolhido] = {'quantidade': quantidade, 'subtotal': subtotal_item}
+                total_pedido += subtotal_item
+                print(f"{quantidade}x {item_escolhido.capitalize()} adicionado ao pedido.")
+            else:
+                print("Erro: Quantidade inválida. Digite um número inteiro maior que zero.")
+        else:
+            print(f"Erro: O item '{item_escolhido}' não está no cardápio.")
+
+    if pedido_atual:
+        clientes[nome]['pedidos'].append(pedido_atual)
+        print("\n--- Resumo do Pedido ---")
+        for item, detalhes in pedido_atual.items():
+            print(f"- {detalhes['quantidade']}x {item.capitalize()}: R$ {detalhes['subtotal']:.2f}")
+        print(f"Total do pedido: R$ {total_pedido:.2f}")
+        print(f"\nPedido de '{nome}' concluído com sucesso.")
+    else:
+        print("Nenhum item foi adicionado ao pedido.")
+
+
+def mostrar_cardapio():
+    """
+    Função para exibir o cardápio atual da cafeteria.
+    """
+    print("\n--- Cardápio da Tia Rosa ---")
+    for item, preco in cardapio.items():
+        print(f"- {item.capitalize()}: R$ {preco:.2f}")
+
+
+# --- Menu Principal ---
+def menu_principal():
+    """
+    Função principal que gerencia o menu de interação com o usuário.
+    """
+    while True:
+        print("\n" + "=" * 30)
+        print("  Bem-vindo à Cafeteria da Tia Rosa!")
+        print("=" * 30)
+        print("1. Cadastrar cliente")
+        print("2. Fazer pedido")
+        print("3. Ver cardápio")
+        print("4. Sair")
+        print("=" * 30)
+
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao == '1':
+            cadastrar_cliente()
+        elif opcao == '2':
+            fazer_pedido()
+        elif opcao == '3':
+            mostrar_cardapio()
+        elif opcao == '4':
+            print("\nSistema encerrado. Obrigado!")
+            break
+        else:
+            print("Opção inválida. Por favor, escolha um número de 1 a 4.")
+
+
+# --- Ponto de Entrada do Programa ---
+if __name__ == "__main__":
+    menu_principal()
